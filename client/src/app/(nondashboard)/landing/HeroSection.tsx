@@ -1,12 +1,55 @@
 "use client"
 
-import React from 'react';
-import Image from 'next/image';
-import { motion }from 'framer-motion';
-import { Input} from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import Image from "next/image";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { setFilters } from "@/state";
 
 const HeroSection = () => {
+  const dispatch = useDispatch();
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
+
+  const handleLocationSearch = async () => {
+    try {
+      const trimmedQuery = searchQuery.trim();
+      if (!trimmedQuery) return;
+  
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          trimmedQuery
+        )}`
+      );
+      const data = await response.json();
+  
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lng = parseFloat(data[0].lon);
+  
+        dispatch(
+          setFilters({
+            location: trimmedQuery,
+            coordinates: [lat, lng],
+          })
+        );
+  
+        const params = new URLSearchParams({
+          location: trimmedQuery,
+          lat: lat.toString(),
+          lng: lng.toString(),
+        });
+  
+        router.push(`/search?${params.toString()}`);
+      }
+    } catch (error) {
+      console.error("Error searching location:", error);
+    }
+  };
+
   return (
     <div className="relative h-screen">
     <Image
@@ -33,15 +76,15 @@ const HeroSection = () => {
           </p>
 
          <div className="flex justify-center">
-            <Input
+         <Input
               type="text"
-              value="search query"
-              onChange={() => {}}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by city, neighborhood or address"
               className="w-full max-w-lg rounded-none rounded-l-xl border-none bg-white h-12"
             />
             <Button
-              
+              onClick={handleLocationSearch}
               className="bg-secondary-600 text-white rounded-none rounded-r-xl border-none hover:bg-secondary-700 h-12"
             >
               Search
