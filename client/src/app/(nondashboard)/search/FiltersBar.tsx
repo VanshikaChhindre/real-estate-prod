@@ -127,7 +127,7 @@ import {
           </div>
   
           {/* Price Range */}
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             {/* Minimum Price Selector */}
             <Select
               value={filters.priceRange[0]?.toString() || "any"}
@@ -135,16 +135,16 @@ import {
                 handleFilterChange("priceRange", value, true)
               }
             >
-              <SelectTrigger className="w-22 rounded-xl border-primary-400">
+              <SelectTrigger className="w-32 rounded-xl border-primary-400">
                 <SelectValue>
                   {formatPriceValue(filters.priceRange[0], true)}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-white">
                 <SelectItem value="any">Any Min Price</SelectItem>
-                {[500, 1000, 1500, 2000, 3000, 5000, 10000].map((price) => (
+                {[5000, 10000, 15000, 20000, 30000, 50000, 100000].map((price) => (
                   <SelectItem key={price} value={price.toString()}>
-                    ${price / 1000}k+
+                    ₹{price / 1000}k+
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -157,16 +157,16 @@ import {
                 handleFilterChange("priceRange", value, false)
               }
             >
-              <SelectTrigger className="w-22 rounded-xl border-primary-400">
+              <SelectTrigger className="w-32 rounded-xl border-primary-400">
                 <SelectValue>
                   {formatPriceValue(filters.priceRange[1], false)}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-white">
                 <SelectItem value="any">Any Max Price</SelectItem>
-                {[1000, 2000, 3000, 5000, 10000].map((price) => (
+                {[10000, 20000, 30000, 50000, 100000].map((price) => (
                   <SelectItem key={price} value={price.toString()}>
-                    &lt;${price / 1000}k
+                    &lt;₹{price / 1000}k
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -174,13 +174,13 @@ import {
           </div>
   
           {/* Beds and Baths */}
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             {/* Beds */}
             <Select
               value={filters.beds}
               onValueChange={(value) => handleFilterChange("beds", value, null)}
             >
-              <SelectTrigger className="w-26 rounded-xl border-primary-400">
+              <SelectTrigger className="w-32 rounded-xl border-primary-400">
                 <SelectValue placeholder="Beds" />
               </SelectTrigger>
               <SelectContent className="bg-white">
@@ -197,7 +197,7 @@ import {
               value={filters.baths}
               onValueChange={(value) => handleFilterChange("baths", value, null)}
             >
-              <SelectTrigger className="w-26 rounded-xl border-primary-400">
+              <SelectTrigger className="w-32 rounded-xl border-primary-400">
                 <SelectValue placeholder="Baths" />
               </SelectTrigger>
               <SelectContent className="bg-white">
