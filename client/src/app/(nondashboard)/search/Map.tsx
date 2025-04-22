@@ -15,12 +15,10 @@ import { useGetPropertiesQuery } from "@/state/api";
 import { Property } from "@/types/prismaTypes";
 
 // Fix Leaflet marker icon paths
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
-
 const DefaultIcon = L.icon({
-  iconUrl: icon.src ?? icon,
-  shadowUrl: iconShadow.src ?? iconShadow,
+  iconUrl: "/leaflet/marker-icon.png",
+  iconRetinaUrl: "/leaflet/marker-icon-2x.png",
+  shadowUrl: "/leaflet/marker-shadow.png",
   iconAnchor: [12, 41],
 });
 
