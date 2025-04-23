@@ -1,18 +1,19 @@
 import { Request, Response } from "express";
 import { PrismaClient, Prisma } from "@prisma/client";
 import { wktToGeoJSON } from "@terraformer/wkt";
-import { S3Client } from "@aws-sdk/client-s3";
+/* import { S3Client } from "@aws-sdk/client-s3"; */
 import { Location } from "@prisma/client";
 import { Upload } from "@aws-sdk/lib-storage";
 import axios from "axios";
+import { s3Client } from "../utils/s3client"
 import "multer"
 
 const prisma = new PrismaClient();
 
-const s3Client = new S3Client({
+/* const s3Client = new S3Client({
   region: process.env.AWS_REGION,
 });
-
+ */
 export const getProperties = async (
   req: Request,
   res: Response
