@@ -241,13 +241,16 @@ export const createProperty = async (
         "User-Agent": "RealEstateApp (justsomedummyemail@gmail.com",
       },
     });
-    const [longitude, latitude] =
-      geocodingResponse.data[0]?.lon && geocodingResponse.data[0]?.lat
-        ? [
-            parseFloat(geocodingResponse.data[0]?.lon),
-            parseFloat(geocodingResponse.data[0]?.lat),
-          ]
-        : [0, 0];
+    let longitude = 0;
+    let latitude = 0;
+
+    if (geocodingResponse.data.length > 0) {
+      longitude = parseFloat(geocodingResponse.data[0].lon);
+      latitude = parseFloat(geocodingResponse.data[0].lat);
+    }
+    if (latitude === 0 && longitude === 0) {
+      console.warn("Geocoding failed or returned (0,0) for address:", { address, city, postalCode });
+    }
 
     // create location
     const [location] = await prisma.$queryRaw<Location[]>`
