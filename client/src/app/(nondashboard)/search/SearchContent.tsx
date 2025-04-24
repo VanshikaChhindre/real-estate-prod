@@ -21,6 +21,7 @@ const SearchContent = () => {
     (state) => state.global.isFiltersFullOpen
   );
 
+  
   useEffect(() => {
     const initialFilters = Array.from(searchParams.entries()).reduce(
       (acc: any, [key, value]) => {
@@ -37,6 +38,9 @@ const SearchContent = () => {
       {}
     );
 
+    console.log(searchParams);
+    
+   
     const cleanedFilters = cleanParams(initialFilters);
     dispatch(setFilters(cleanedFilters));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

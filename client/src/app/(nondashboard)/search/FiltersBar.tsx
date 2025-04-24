@@ -6,7 +6,7 @@ import {
   } from "@/state";
   import { useAppSelector } from "@/state/redux";
   import { usePathname, useRouter } from "next/navigation";
-  import React, { useState } from "react";
+  import React, { useEffect, useState } from "react";
   import { useDispatch } from "react-redux";
   import { debounce } from "lodash";
   import { cleanParams, cn, formatPriceValue } from "@/lib/utils";
@@ -80,6 +80,7 @@ import {
         const data = await response.json();
         if (data.length > 0) {
           const { lon, lat } = data[0];
+          
           dispatch(
             setFilters({
               location: searchInput,
@@ -91,6 +92,10 @@ import {
         console.error("Error searching location:", err);
       }
     };
+
+    useEffect(()=>{
+      handleLocationSearch();
+    })
   
     return (
       <div className="flex justify-between items-center w-full py-5">

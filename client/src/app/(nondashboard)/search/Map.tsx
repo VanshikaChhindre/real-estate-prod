@@ -47,30 +47,32 @@ const Map = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
         />
-        {properties.map((property: Property) => (
-          <Marker
-            key={property.id}
-            position={[
-              property.location.coordinates.latitude,
-              property.location.coordinates.longitude,
-            ]}
-          >
-            <Popup>
-              <div className="marker-popup">
-                <a
-                  href={`/search/${property.id}`}
-                  target="_blank"
-                  className="marker-popup-title"
-                >
-                  {property.name}
-                </a>
-                <p>
-                  ₹{property.pricePerMonth} / month
-                </p>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+        {properties.map((property: Property) => {
+          const lat = property.location?.coordinates?.latitude;
+          const lng = property.location?.coordinates?.longitude;
+
+          if (typeof lat !== "number" || typeof lng !== "number") return null; // Skip invalid
+
+          return (
+            <Marker
+              key={property.id}
+              position={[lat, lng]}
+            >
+              <Popup>
+                <div className="marker-popup">
+                  <a
+                    href={`/search/${property.id}`}
+                    target="_blank"
+                    className="marker-popup-title"
+                  >
+                    {property.name}
+                  </a>
+                  <p>₹{property.pricePerMonth} / month</p>
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
     </div>
   );
