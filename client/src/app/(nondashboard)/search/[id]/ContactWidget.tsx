@@ -1,12 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { useGetAuthUserQuery } from "@/state/api";
+import { useGetAuthUserQuery, useStartConversationMutation } from "@/state/api";
 import { Phone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const ContactWidget = ({ onOpenModal }: ContactWidgetProps) => {
+const ContactWidget = ({ onOpenModal, managerId}: ContactWidgetProps) => {
+
+
   const { data: authUser } = useGetAuthUserQuery();
   const router = useRouter();
+
+  const [startConversation, { isLoading: starting }] = useStartConversationMutation();
 
   const handleButtonClick = () => {
     if (authUser) {
@@ -15,6 +19,30 @@ const ContactWidget = ({ onOpenModal }: ContactWidgetProps) => {
       router.push("/signin");
     }
   };
+
+  const handleChatClick = async () => {
+    if (!authUser) {
+      router.push("/signin");
+      return;
+    }
+  
+    if (!managerId) {
+      console.error("Manager ID missing");
+      return;
+    }
+  
+    try {
+      const res = await startConversation({
+        tenantId: authUser.cognitoInfo.userId,
+        managerId,
+      }).unwrap();
+  
+      router.push(`/chat/${res.id}`);
+    } catch (err) {
+      console.error("Failed to start conversation:", err);
+    }
+  };
+
 
   return (
     <div className="bg-white border border-primary-200 rounded-2xl p-7 h-fit min-w-[300px]">
@@ -30,12 +58,20 @@ const ContactWidget = ({ onOpenModal }: ContactWidgetProps) => {
           </div>
         </div>
       </div>
+      <div className="flex flex-col gap-2">
       <Button
         className="w-full bg-primary-700 text-white hover:bg-primary-600"
         onClick={handleButtonClick}
       >
         {authUser ? "Submit Application" : "Sign In to Apply"}
       </Button>
+      <Button
+        className="w-full bg-green-600 text-white hover:bg-primary-600"
+        onClick={handleChatClick}
+      >
+        {authUser ? "Start Chat" : "Sign In to chat"}
+      </Button>
+      </div>
 
       <hr className="my-4" />
       <div className="text-sm">

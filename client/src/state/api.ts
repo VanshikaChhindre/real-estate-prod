@@ -6,6 +6,8 @@ import {
   Payment,
   Property,
   Tenant,
+  Conversation,
+  Message
 } from "@/types/prismaTypes";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
@@ -32,6 +34,8 @@ export const api = createApi({
     "Leases",
     "Payments",
     "Applications",
+    "Conversations",
+    "Messages"
   ],
   endpoints: (build) => ({
     getAuthUser: build.query<User, void>({
@@ -348,6 +352,39 @@ export const api = createApi({
         });
       },
     }),
+
+    startConversation: build.mutation<Conversation, { tenantId: string; managerId: string; }>({
+      query: ({ tenantId, managerId }) => ({
+        url: "/conversation/start",
+        method: "POST",
+        body: { tenantId, managerId },
+      }),
+      async onQueryStarted(_, { queryFulfilled }) {
+        await queryFulfilled; // Handle response, e.g., show a success message
+      },
+    }),
+
+    getUserConversations: build.query<Conversation[], string>({
+      query: (userId) => `conversation/${userId}`, // Adjust the endpoint based on your API
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Conversations" as const, id })),
+              { type: "Conversations", id: "LIST" },
+            ]
+          : [{ type: "Conversations", id: "LIST" }],
+    }),
+
+    getConversationMessages: build.query<Message[], string>({
+      query: (conversationId) => ({
+        url: `/conversation/messages/${conversationId}`,
+        method: "GET",
+      }),
+      providesTags: (result, error, conversationId) =>
+        result ? [{ type: "Conversations", id: conversationId }] : [],
+    }),
+  
+
   }),
 });
 
@@ -369,4 +406,7 @@ export const {
   useGetApplicationsQuery,
   useUpdateApplicationStatusMutation,
   useCreateApplicationMutation,
+  useStartConversationMutation,
+  useGetUserConversationsQuery,
+  useGetConversationMessagesQuery
 } = api;

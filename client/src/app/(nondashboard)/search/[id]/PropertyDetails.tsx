@@ -13,6 +13,9 @@ const PropertyDetails = ({ propertyId }: PropertyDetailsProps) => {
   } = useGetPropertyQuery(propertyId);
 
   if (isLoading) return <>Loading...</>;
+  if(property){
+    console.log("property", property)
+  }
   if (isError || !property) {
     return <>Property not Found</>;
   }
@@ -87,7 +90,7 @@ const PropertyDetails = ({ propertyId }: PropertyDetailsProps) => {
                 Application Fee
               </span>
               <span className="text-primary-700">
-                ${property.applicationFee}
+                $ {property.applicationFee}
               </span>
             </div>
             <hr />

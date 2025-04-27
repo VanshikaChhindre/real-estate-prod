@@ -24,6 +24,7 @@ const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
 
+
   const isDashboardPage =
     pathname.includes("/managers") || pathname.includes("/tenants");
 
@@ -101,7 +102,10 @@ const Navbar = () => {
         <div className="flex items-center gap-5">
           {authUser ? (
             <>
-              <div className="relative hidden md:block">
+              <div 
+              className="relative hidden md:block"
+              onClick={() => router.push('/chat')}
+              >
                 <MessageCircle className="w-6 h-6 cursor-pointer text-primary-200 hover:text-primary-400" />
                 <span className="absolute top-0 right-0 w-2 h-2 bg-secondary-700 rounded-full"></span>
               </div>

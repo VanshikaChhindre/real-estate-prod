@@ -14841,3 +14841,44 @@ export namespace Prisma {
    */
   export const dmmf: runtime.BaseDMMF
 }
+
+
+import { Prisma } from '@prisma/client'; // Adjust the import based on your Prisma setup
+
+// Define the type for the Conversation model
+export type Conversation = {
+  id: string;
+  tenantId: string;
+  managerId: string;
+  propertyId: string;
+  createdAt: Date;
+  messages: Message[]; // Assuming you want to include messages
+};
+
+// Define the type for the Message model
+export type Message = {
+  id: number;
+  conversationId: string;
+  senderId: string;
+  content: string;
+  createdAt: Date;
+};
+
+// Define the Prisma types for the Conversation model
+export type ConversationPayload<ExtArgs = {}> = Prisma.$ConversationPayload<ExtArgs>;
+
+export type ConversationFindUniqueArgs<ExtArgs = {}> = Prisma.ConversationFindUniqueArgs<ExtArgs>;
+export type ConversationFindManyArgs<ExtArgs = {}> = Prisma.ConversationFindManyArgs<ExtArgs>;
+export type ConversationCreateArgs<ExtArgs = {}> = Prisma.ConversationCreateArgs<ExtArgs>;
+export type ConversationUpdateArgs<ExtArgs = {}> = Prisma.ConversationUpdateArgs<ExtArgs>;
+export type ConversationDeleteArgs<ExtArgs = {}> = Prisma.ConversationDeleteArgs<ExtArgs>;
+
+// Add any other necessary types or operations for the Conversation model
+// Prisma types for Message model
+export type MessagePayload<ExtArgs = {}> = Prisma.$MessagePayload<ExtArgs>;
+
+export type MessageFindUniqueArgs<ExtArgs = {}> = Prisma.MessageFindUniqueArgs<ExtArgs>;
+export type MessageFindManyArgs<ExtArgs = {}> = Prisma.MessageFindManyArgs<ExtArgs>;
+export type MessageCreateArgs<ExtArgs = {}> = Prisma.MessageCreateArgs<ExtArgs>;
+export type MessageUpdateArgs<ExtArgs = {}> = Prisma.MessageUpdateArgs<ExtArgs>;
+export type MessageDeleteArgs<ExtArgs = {}> = Prisma.MessageDeleteArgs<ExtArgs>;
