@@ -1,4 +1,4 @@
-import { useGetPropertyQuery } from "@/state/api";
+import { useGetPropertyQuery, useGetPropertyLeasesQuery } from "@/state/api";
 import { MapPin, Star } from "lucide-react";
 import React from "react";
 
@@ -8,6 +8,19 @@ const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
     isError,
     isLoading,
   } = useGetPropertyQuery(propertyId);
+
+   const { data: leases = [], isLoading: leasesLoading } = useGetPropertyLeasesQuery(propertyId);
+  const currentDate = new Date();
+
+  const activeLease = leases.find(
+  (lease) =>
+    new Date(lease.startDate) <= currentDate &&
+    new Date(lease.endDate) >= currentDate
+);
+
+const leaseStatusText = activeLease
+  ? `This property is rented from ${new Date(activeLease.startDate).toLocaleDateString()} to ${new Date(activeLease.endDate).toLocaleDateString()}.`
+  : "This property is currently available for rent.";
 
   if (isLoading) return <>Loading...</>;
   if (isError || !property) {
@@ -48,7 +61,7 @@ const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
           <div>
             <div className="text-sm text-gray-500">Monthly Rent</div>
             <div className="font-semibold">
-              ${property.pricePerMonth.toLocaleString()}
+             ₹{property.pricePerMonth.toLocaleString()}
             </div>
           </div>
           <div className="border-l border-gray-300 h-10"></div>
@@ -69,6 +82,9 @@ const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="text-md font-medium text-gray-700 mb-4">
+            {leaseStatusText}
       </div>
 
       {/* Summary */}

@@ -28,6 +28,8 @@ const ApplicationModal = ({
       email: "",
       phoneNumber: "",
       message: "",
+      startDate: "",
+      endDate: "",
     },
   });
 
@@ -39,12 +41,17 @@ const ApplicationModal = ({
       return;
     }
 
+    const startDate = new Date(data.startDate);  // Ensure you have the correct format
+    const endDate = new Date(data.endDate);   
+
     await createApplication({
       ...data,
       applicationDate: new Date().toISOString(),
       status: "Pending",
       propertyId: propertyId,
       tenantCognitoId: authUser.cognitoInfo.userId,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
     });
     onClose();
   };
@@ -75,6 +82,20 @@ const ApplicationModal = ({
               type="text"
               placeholder="Enter your phone number"
             />
+
+            <CustomFormField
+              name="startDate"
+              label="Start Date"
+              type="date"
+              placeholder="Enter the start date"
+            />
+            <CustomFormField
+              name="endDate"
+              label="End Date"
+              type="date"
+              placeholder="Enter the end date"
+            />
+
             <CustomFormField
               name="message"
               label="Message (Optional)"

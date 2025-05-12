@@ -25,6 +25,7 @@ const PropertyTenants = () => {
   const { id } = useParams();
   const propertyId = Number(id);
 
+
   const { data: property, isLoading: propertyLoading } =
     useGetPropertyQuery(propertyId);
   const { data: leases, isLoading: leasesLoading } =
@@ -33,6 +34,7 @@ const PropertyTenants = () => {
     useGetPaymentsQuery(propertyId);
 
   if (propertyLoading || leasesLoading || paymentsLoading) return <Loading />;
+  
 
   const getCurrentMonthPaymentStatus = (leaseId: number) => {
     const currentDate = new Date();
@@ -42,6 +44,9 @@ const PropertyTenants = () => {
         new Date(payment.dueDate).getMonth() === currentDate.getMonth() &&
         new Date(payment.dueDate).getFullYear() === currentDate.getFullYear()
     );
+    console.log("All payments:", payments);
+   console.log("Checking leaseId:", leaseId);
+   console.log("Current date:", currentDate);
     return currentMonthPayment?.paymentStatus || "Not Paid";
   };
 
@@ -101,7 +106,7 @@ const PropertyTenants = () => {
                       <div className="flex items-center space-x-3">
                         <Image
                           src="/landing-i1.png"
-                          alt={lease.tenant.name}
+                          alt={lease.tenantCognitoId}
                           width={40}
                           height={40}
                           className="rounded-full"
@@ -122,7 +127,7 @@ const PropertyTenants = () => {
                       </div>
                       <div>{new Date(lease.endDate).toLocaleDateString()}</div>
                     </TableCell>
-                    <TableCell>${lease.rent.toFixed(2)}</TableCell>
+                    <TableCell>₹{lease.rent.toFixed(2)}</TableCell>
                     <TableCell>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-semibold ${

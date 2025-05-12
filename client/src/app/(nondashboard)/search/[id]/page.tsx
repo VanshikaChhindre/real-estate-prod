@@ -9,7 +9,7 @@ import PropertyDetails from "./PropertyDetails";
 import PropertyLocation from "./PropertyLocation";
 import ContactWidget from "./ContactWidget";
 import ApplicationModal from "./ApplicationModal";
-import { useGetPropertyQuery } from "@/state/api";
+import { useGetPropertyQuery, useGetPropertyLeasesQuery } from "@/state/api";
 
 const SingleListing = () => {
   const { id } = useParams();
@@ -17,6 +17,7 @@ const SingleListing = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: authUser } = useGetAuthUserQuery();
   const { data: propertyDetails } = useGetPropertyQuery(propertyId);
+ 
 
   const photoUrls = propertyDetails?.photoUrls?.length ? propertyDetails.photoUrls : ["/singlelisting-2.jpg", "/singlelisting-3.jpg"];
   const managerId = propertyDetails?.managerCognitoId;

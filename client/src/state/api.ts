@@ -267,7 +267,7 @@ export const api = createApi({
 
     // lease related enpoints
     getLeases: build.query<Lease[], number>({
-      query: () => "leases",
+      query: (tenantId) => `leases?tenantId=${tenantId}`,
       providesTags: ["Leases"],
       async onQueryStarted(_, { queryFulfilled }) {
         await withToast(queryFulfilled, {
@@ -383,7 +383,21 @@ export const api = createApi({
       providesTags: (result, error, conversationId) =>
         result ? [{ type: "Conversations", id: conversationId }] : [],
     }),
-  
+
+  createPayment: build.mutation<Payment, { leaseId: number; amountPaid: number }>({
+  query: (body) => ({
+    url: `applications/payment`,
+    method: "POST",
+    body,
+  }),
+  invalidatesTags: ["Applications", "Payments"], // Adjust depending on how you use tags
+  async onQueryStarted(_, { queryFulfilled }) {
+    await withToast(queryFulfilled, {
+      success: "Payment recorded successfully!",
+      error: "Failed to record payment.",
+    });
+  },
+}),
 
   }),
 });
@@ -408,5 +422,6 @@ export const {
   useCreateApplicationMutation,
   useStartConversationMutation,
   useGetUserConversationsQuery,
-  useGetConversationMessagesQuery
+  useGetConversationMessagesQuery,
+  useCreatePaymentMutation
 } = api;

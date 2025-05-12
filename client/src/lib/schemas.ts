@@ -31,6 +31,12 @@ export const applicationSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
   phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
+    startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+    message: "Invalid start date",
+  }),
+  endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+    message: "Invalid end date",
+  }),
   message: z.string().optional(),
 });
 

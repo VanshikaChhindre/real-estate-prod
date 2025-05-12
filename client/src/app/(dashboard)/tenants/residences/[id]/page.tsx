@@ -1,6 +1,7 @@
 "use client";
 
 import Loading from "@/components/Loading";
+import { addMonths } from "date-fns";
 import {
   Table,
   TableBody,
@@ -45,14 +46,14 @@ const PaymentMethod = () => {
             <div className="flex flex-col justify-between">
               <div>
                 <div className="flex items-start gap-5">
-                  <h3 className="text-lg font-semibold">Visa ending in 2024</h3>
+                  <h3 className="text-lg font-semibold">Visa ending in 2027</h3>
                   <span className="text-sm font-medium border border-primary-700 text-primary-700 px-3 py-1 rounded-full">
                     Default
                   </span>
                 </div>
                 <div className="text-sm text-gray-500 flex items-center">
                   <CreditCard className="w-4 h-4 mr-1" />
-                  <span>Expiry • 26/06/2024</span>
+                  <span>Expiry • 26/06/2027</span>
                 </div>
               </div>
               <div className="text-sm text-gray-500 flex items-center">
@@ -78,10 +79,21 @@ const PaymentMethod = () => {
 const ResidenceCard = ({
   property,
   currentLease,
+  payments = [],
 }: {
   property: Property;
   currentLease: Lease;
+  payments?: Payment[];
+
 }) => {
+
+  const latestPayment = [...payments]
+    .sort((a, b) => new Date(b.paymentDate).getTime() - new Date(a.paymentDate).getTime())[0];
+
+  const nextPaymentDate = latestPayment
+    ? addMonths(new Date(latestPayment.paymentDate), 1)
+    : new Date(currentLease.startDate); // fallback if no payment exist
+
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden p-6 flex-1 flex flex-col justify-between">
       {/* Header */}
@@ -103,8 +115,8 @@ const ResidenceCard = ({
             </div>
           </div>
           <div className="text-xl font-bold">
-            ${currentLease.rent}{" "}
-            <span className="text-gray-500 text-sm font-normal">/ night</span>
+            ₹{currentLease.rent}{" "}
+            <span className="text-gray-500 text-sm font-normal">/ month</span>
           </div>
         </div>
       </div>
@@ -129,7 +141,7 @@ const ResidenceCard = ({
           <div className="xl:flex">
             <div className="text-gray-500 mr-2">Next Payment: </div>
             <div className="font-semibold">
-              {new Date(currentLease.endDate).toLocaleDateString()}
+              {nextPaymentDate.toLocaleDateString()}
             </div>
           </div>
         </div>
@@ -210,7 +222,7 @@ const BillingHistory = ({ payments }: { payments: Payment[] }) => {
                 <TableCell>
                   {new Date(payment.paymentDate).toLocaleDateString()}
                 </TableCell>
-                <TableCell>${payment.amountPaid.toFixed(2)}</TableCell>
+                <TableCell>₹{payment.amountPaid.toFixed(2)}</TableCell>
                 <TableCell>
                   <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded-md flex items-center justify-center font-semibold hover:bg-primary-700 hover:text-primary-50">
                     <ArrowDownToLineIcon className="w-4 h-4 mr-1" />
@@ -240,12 +252,14 @@ const Residence = () => {
     { skip: !authUser?.cognitoInfo?.userId }
   );
   const { data: payments, isLoading: paymentsLoading } = useGetPaymentsQuery(
-    leases?.[0]?.id || 0,
-    { skip: !leases?.[0]?.id }
+    Number(id)
   );
 
   if (propertyLoading || leasesLoading || paymentsLoading) return <Loading />;
   if (!property || propertyError) return <div>Error loading property</div>;
+
+  console.log(leases)
+  console.log("payements: ", payments)
 
   const currentLease = leases?.find(
     (lease) => lease.propertyId === property.id
@@ -256,7 +270,7 @@ const Residence = () => {
       <div className="w-full mx-auto">
         <div className="md:flex gap-10">
           {currentLease && (
-            <ResidenceCard property={property} currentLease={currentLease} />
+            <ResidenceCard property={property} currentLease={currentLease} payments={payments || []}/>
           )}
           <PaymentMethod />
         </div>

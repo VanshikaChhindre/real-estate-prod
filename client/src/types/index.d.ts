@@ -121,6 +121,11 @@ declare global {
     isDashboard: boolean;
   }
 
+  interface PaymentProps {
+    leaseId: number;
+    amount: number;
+  }
+
   interface AppSidebarProps {
     userType: "manager" | "tenant";
   }

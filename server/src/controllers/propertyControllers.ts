@@ -292,3 +292,29 @@ export const createProperty = async (
       .json({ message: `Error creating property: ${err.message}` });
   }
 };
+
+
+export const getPropertyLeases = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const leases = await prisma.lease.findMany({
+      where: {
+        propertyId: Number(id),
+    },
+    include: {
+    tenant: true, // 👈 This is what populates `lease.tenant`
+  },
+    });
+
+    if (leases) {
+      res.json(leases);
+    } else {
+      res.status(404).json({ message: "No leases found for this property" });
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: `Error retrieving leases: ${error.message}` });
+  }
+};

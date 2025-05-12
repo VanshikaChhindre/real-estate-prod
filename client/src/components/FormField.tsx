@@ -45,7 +45,8 @@ interface FormFieldProps {
     | "switch"
     | "password"
     | "file"
-    | "multi-input";
+    | "multi-input"
+    | "date";
   placeholder?: string;
   options?: { value: string; label: string }[];
   accept?: string;
@@ -158,6 +159,15 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
             control={control}
             placeholder={placeholder}
             inputClassName={inputClassName}
+          />
+        );
+      case "date":
+        return (
+          <Input
+            type="date"
+            {...field}
+            className={`border-gray-200 p-4 ${inputClassName}`}
+            disabled={disabled}
           />
         );
       default:

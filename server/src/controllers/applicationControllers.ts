@@ -97,6 +97,8 @@ export const createApplication = async (
       email,
       phoneNumber,
       message,
+      startDate,   // Get the start date from the request
+      endDate,     // Get the end date from the request
     } = req.body;
 
     const property = await prisma.property.findUnique({
@@ -113,10 +115,8 @@ export const createApplication = async (
       // Create lease first
       const lease = await prisma.lease.create({
         data: {
-          startDate: new Date(), // Today
-          endDate: new Date(
-            new Date().setFullYear(new Date().getFullYear() + 1)
-          ), // 1 year from today
+          startDate: new Date(startDate),   // Use the startDate from the client
+          endDate: new Date(endDate),   
           rent: property.pricePerMonth,
           deposit: property.securityDeposit,
           property: {
@@ -244,5 +244,43 @@ export const updateApplicationStatus = async (
     res
       .status(500)
       .json({ message: `Error updating application status: ${error.message}` });
+  }
+};
+
+
+export const createPayment = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { leaseId, amountPaid } = req.body;
+
+    if (!leaseId || !amountPaid) {
+      res.status(400).json({ message: "leaseId and amountPaid are required" });
+      return;
+    }
+
+    const lease = await prisma.lease.findUnique({
+      where: { id: leaseId },
+    });
+
+    if (!lease) {
+      res.status(404).json({ message: "Lease not found" });
+      return;
+    }
+
+    const payment = await prisma.payment.create({
+      data: {
+        amountDue: lease.rent,
+        amountPaid: parseFloat(amountPaid),
+        dueDate: new Date(), // or calculate based on lease terms
+        paymentDate: new Date(),
+        paymentStatus: "Paid", // assuming you're using an enum PaymentStatus
+        lease: {
+          connect: { id: leaseId },
+        },
+      },
+    });
+
+    res.status(201).json(payment);
+  } catch (error: any) {
+    res.status(500).json({ message: `Error creating payment: ${error.message}` });
   }
 };
